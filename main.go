@@ -15,7 +15,6 @@ type Node struct {
 }
 
 func parseTreeLine(line string) (int, string, bool) {
-	// Count indentation based on tree characters
 	indent := 0
 	for i, char := range line {
 		if char == ' ' || char == '│' || char == '├' || char == '└' || char == '─' {
@@ -25,15 +24,18 @@ func parseTreeLine(line string) (int, string, bool) {
 		}
 	}
 
-	// Extract clean name
 	name := strings.TrimSpace(line[indent:])
 	name = strings.TrimPrefix(name, "├── ")
 	name = strings.TrimPrefix(name, "└── ")
 	
-	// Determine if directory or file
-	isFile := !strings.HasSuffix(name, "/")
-	name = strings.TrimSuffix(name, "/")
-
+	name = strings.TrimLeft(name, "│ ")
+	
+	isFile := true
+	if strings.HasSuffix(name, "/") {
+		isFile = false
+		name = strings.TrimSuffix(name, "/")
+	}
+	
 	return indent / 4, name, isFile
 }
 
@@ -97,6 +99,15 @@ func createFileSystem(node *Node, basePath string) error {
 	return nil
 }
 
+func markDirectories(node *Node) {
+	if len(node.children) > 0 {
+		node.isFile = false
+		for _, child := range node.children {
+			markDirectories(child)
+		}
+	}
+}
+
 func main() {
 	fmt.Println("Enter your tree structure (press Ctrl+D when done):")
 	fmt.Println("Example format:")
@@ -119,6 +130,7 @@ func main() {
 	}
 
 	root := buildTree(lines)
+	markDirectories(root)
 	
 	if err := createFileSystem(root, "."); err != nil {
 		fmt.Fprintf(os.Stderr, "Error creating file system: %v\n", err)
