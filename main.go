@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -109,24 +109,44 @@ func markDirectories(node *Node) {
 }
 
 func main() {
-	fmt.Println("Enter your tree structure (press Ctrl+D when done):")
-	fmt.Println("Example format:")
+	fmt.Println("\n=== Tree Structure Generator ===")
+	fmt.Println("\nCreate directories and files from a tree structure.")
+	fmt.Println("\nInstructions:")
+	fmt.Println("1. Enter your tree structure below")
+	fmt.Println("2. Press Enter after each line")
+	fmt.Println("3. Press Ctrl+D (Unix) or Ctrl+Z (Windows) once when done")
+	fmt.Println("   Note: If using Ctrl+D, you may need to press it twice if")
+	fmt.Println("         you're at the beginning of a new line")
+	fmt.Println("\nExample structure:")
 	fmt.Println(".")
-	fmt.Println("├── src/")
-	fmt.Println("│   ├── components/")
-	fmt.Println("│   │   ├── Header.js")
-	fmt.Println("│   │   └── Footer.js")
-	fmt.Println("│   └── utils/")
-	fmt.Println("└── package.json")
+	fmt.Println("├── project/")
+	fmt.Println("│   ├── src/")
+	fmt.Println("│   │   ├── main.go")
+	fmt.Println("│   │   └── utils/")
+	fmt.Println("│   │       └── helper.go")
+	fmt.Println("│   ├── tests/")
+	fmt.Println("│   │   └── main_test.go")
+	fmt.Println("│   └── README.md")
+	fmt.Println("└── .gitignore")
+	fmt.Println("\nEnter your tree structure below:")
+
+	data, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+		os.Exit(1)
+	}
 
 	var lines []string
-	scanner := bufio.NewScanner(os.Stdin)
-	
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line != "" {
+	for _, line := range strings.Split(string(data), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" {
 			lines = append(lines, line)
 		}
+	}
+
+	if len(lines) == 0 {
+		fmt.Println("No input provided. Exiting...")
+		os.Exit(1)
 	}
 
 	root := buildTree(lines)
@@ -137,5 +157,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Directory structure created successfully!")
+	fmt.Println("\n✨ Directory structure created successfully!")
 }
