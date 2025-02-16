@@ -35,12 +35,28 @@ sudo mv treedo /usr/local/bin/
 This setup will let users:
 1. Install with `make install` for local development
 2. Use pre-built binaries from GitHub releases
-3. Eventually add Homebrew support
-4. Run as `treedo` command globally
+3. Run as `treedo` command globally
 
 For immediate use without installation:
 ```bash
 go run github.com/iiviie/treedo@latest
+```
+
+4. Verify installation:
+```bash
+treedo --version
+```
+
+> **Note**: If you can't run the `treedo` command after installation, it's likely because your Go bin directory isn't in your PATH. Follow steps 1-3 above to fix this.
+
+#### Troubleshooting 🔧
+- Command not found? Make sure your Go bin directory is in your PATH
+- Not sure which shell you're using? Run `echo $SHELL`
+- Still having issues? Run `echo $PATH` to check your current PATH
+
+3. Reload your shell configuration:
+```bash
+source ~/.bashrc  # or source ~/.zshrc if using zsh
 ```
 
 ## Usage 🛠️
@@ -127,5 +143,35 @@ file.txt        # Simple file
 - `Error reading input`: Invalid input format
 - `Failed to create directory`: Permission or path issues
 - `No input provided`: Submit empty input
+
+After installation, make sure the Go bin directory is in your PATH:
+
+1. Find your Go bin directory:
+```bash
+go env GOPATH
+```
+
+2. Add this line to your shell configuration file (`~/.bashrc`, `~/.zshrc`, or similar):
+```bash
+# Replace /path/to/go with the output from 'go env GOPATH'
+export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+3. Reload your shell configuration:
+```bash
+source ~/.bashrc  # or source ~/.zshrc if using zsh
+```
+
+4. Verify installation:
+```bash
+treedo --version
+```
+
+> **Note**: If you can't run the `treedo` command after installation, it's likely because your Go bin directory isn't in your PATH. Follow steps 1-3 above to fix this.
+
+#### Troubleshooting 🔧
+- Command not found? Make sure your Go bin directory is in your PATH
+- Not sure which shell you're using? Run `echo $SHELL`
+- Still having issues? Run `echo $PATH` to check your current PATH
 
 
